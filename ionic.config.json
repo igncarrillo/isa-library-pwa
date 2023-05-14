@@ -1,0 +1,8 @@
+{
+  "name": "isa-library-pwa",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react",
+  "id": "0acb58de"
+}
