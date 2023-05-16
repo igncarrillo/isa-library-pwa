@@ -4,11 +4,12 @@ import {login} from '../commons/login';
 import {basepath} from "../commons/configs";
 import {IonContent, IonIcon, IonItem, IonLabel, IonList} from "@ionic/react";
 import {caretDown, caretUp} from "ionicons/icons";
+import {Author} from "./AuthorList";
 
 interface Book {
     id: number;
     name: string;
-    authors: string[];
+    authors: Author[];
     copies: number;
     publishYear: string;
 }
@@ -66,7 +67,12 @@ const BookList: React.FC = () => {
                             <IonList inset slot={"helper"}>
                                 <IonItem ><IonLabel color={"secondary"}>Copies: {book.copies}</IonLabel></IonItem>
                                 <IonItem ><IonLabel color={"secondary"}>Published: {book.publishYear}</IonLabel></IonItem>
-                                <IonItem ><IonLabel color={"secondary"}>Authors: {book.authors}</IonLabel></IonItem>
+                                <IonItem >
+                                    <IonLabel color={"secondary"}>Authors:</IonLabel>
+                                    {book.authors.map(author => (
+                                        <IonLabel key={author.id} class="ion-text-wrap">{author.name}</IonLabel>
+                                    ))}
+                                </IonItem>
                             </IonList>
                         )}
                     </IonItem>

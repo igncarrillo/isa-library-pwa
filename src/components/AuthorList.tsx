@@ -1,11 +1,11 @@
 import './AuthorList.css';
-import {IonContent, IonIcon, IonItem, IonLabel, IonList} from "@ionic/react";
+import {IonContent, IonItem, IonLabel, IonList} from "@ionic/react";
 import {useEffect, useState} from "react";
 import {login} from "../commons/login";
 import {basepath} from "../commons/configs";
-import {caretDown, caretUp} from "ionicons/icons";
 
 export interface Author {
+    id: number
     name: string
 }
 
@@ -25,6 +25,7 @@ async function getAuthors() {
     const authors = await response.json();
     return authors;
 }
+
 const AuthorList: React.FC = () => {
     const [authors, setAuthors] = useState<Author[]>([]);
 
@@ -44,7 +45,7 @@ const AuthorList: React.FC = () => {
         <IonContent>
             <IonList lines="full" class="ion-padding">
                 {authors.map((author) => (
-                    <IonItem>
+                    <IonItem key={author.id}>
                         <IonLabel>{author.name}</IonLabel>
                     </IonItem>
                 ))}
