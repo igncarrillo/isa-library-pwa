@@ -1,19 +1,25 @@
-# ==== CONFIGURE =====
-# Use a Node 16 base image
-FROM node:16-alpine
-# Set the working directory to /app inside the container
+# module install
+FROM node:16-alpine as module-install-stage
+# set working directory
 WORKDIR /app
-# Copy app files
+# add `/app/node_modules/.bin` to $PATH
+ENV PATH /library-pwa/node_modules/.bin:$PATH
+
+COPY package.json /app/package.json
+
+RUN apk add yarn
+RUN yarn install --production
+
+# build
+FROM node:16-alpine as build-stage
+COPY --from=module-install-stage /app/node_modules/ /app/node_modules
+WORKDIR /app
 COPY . .
-# ==== BUILD =====
-# Install dependencies (npm ci makes sure the exact versions in the lockfile gets installed)
-RUN npm ci
-# Build the app
-RUN npm run build
-# ==== RUN =======
-# Set the env to "production"
-ENV NODE_ENV production
-# Expose the port on which the app will be running (3000 is the default that `serve` uses)
-EXPOSE 3000
-# Start the app
-CMD [ "npx", "serve", "build" ]
+RUN yarn build
+
+# serve
+FROM node:16-alpine
+COPY --from=build-stage /app/build/ /app/build
+RUN npm install -g serve
+# start app
+CMD serve -s /app/build -l 3000
