@@ -4,8 +4,18 @@ export interface Token {
     id_token: string
 }
 
+let globalToken: any = null;
+
+export function getToken() {
+    return globalToken;
+}
+
+function setToken(newToken: string) {
+    globalToken = newToken;
+}
+
 export async function login() {
-    const response = await fetch(basepath+'/authenticate', {
+    const response = await fetch(basepath + '/authenticate', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -22,6 +32,6 @@ export async function login() {
     }
 
     console.log("successfully login")
-    const token:Token = await response.json();
-    return token.id_token;
+    const token: Token = await response.json();
+    setToken(token.id_token)
 }

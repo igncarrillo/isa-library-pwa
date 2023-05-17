@@ -1,10 +1,11 @@
 import './BookList.css';
 import {useEffect, useState} from "react";
-import {login} from '../commons/login';
+import {getToken, login} from '../commons/login';
 import {basepath} from "../commons/configs";
 import {IonContent, IonIcon, IonItem, IonLabel, IonList} from "@ionic/react";
 import {caretDown, caretUp} from "ionicons/icons";
 import {Author} from "./AuthorList";
+import {getEntity} from "../commons/entities";
 
 interface Book {
     id: number;
@@ -12,23 +13,6 @@ interface Book {
     authors: Author[];
     copies: number;
     publishYear: string;
-}
-
-async function getBooks() {
-    const token = await login();
-
-    const response = await fetch(basepath + '/books', {
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    });
-
-    if (!response.ok) {
-        throw new Error('Failed to fetch book list');
-    }
-
-    const books = await response.json();
-    return books;
 }
 
 const BookList: React.FC = () => {
@@ -42,7 +26,7 @@ const BookList: React.FC = () => {
     useEffect(() => {
         async function fetchBooks() {
             try {
-                const books = await getBooks();
+                const books = await getEntity('/books');
                 setBooks(books);
             } catch (error) {
                 console.error(error);
@@ -65,9 +49,11 @@ const BookList: React.FC = () => {
                         )}
                         {selectedBook === book && (
                             <IonList inset slot={"helper"}>
-                                <IonItem ><IonLabel color={"secondary"}>Copies: {book.copies}</IonLabel></IonItem>
-                                <IonItem ><IonLabel color={"secondary"}>Published: {book.publishYear}</IonLabel></IonItem>
-                                <IonItem >
+                                <IonItem><IonLabel
+                                    color={"secondary"}>Copies: </IonLabel><IonLabel> {book.copies}</IonLabel></IonItem>
+                                <IonItem><IonLabel
+                                    color={"secondary"}>Published: </IonLabel><IonLabel> {book.publishYear}</IonLabel></IonItem>
+                                <IonItem>
                                     <IonLabel color={"secondary"}>Authors:</IonLabel>
                                     {book.authors.map(author => (
                                         <IonLabel key={author.id} class="ion-text-wrap">{author.name}</IonLabel>
